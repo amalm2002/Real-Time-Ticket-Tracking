@@ -26,7 +26,13 @@ const AdminDashboard = () => {
     const fetchUsers = async () => {
       try {
         const data = await backendApi.getAllUsers();
-        setUsers(data);
+
+        const normalizedUsers = data.map((u: any) => ({
+          ...u,
+          assignedToken: u.token, 
+        }));
+
+        setUsers(normalizedUsers);
       } catch (error) {
         console.error("Failed to fetch users", error);
       }
@@ -34,6 +40,7 @@ const AdminDashboard = () => {
 
     fetchUsers();
   }, []);
+
 
 
   const dispatch = useDispatch();
@@ -64,7 +71,7 @@ const AdminDashboard = () => {
 
       setDialogOpen(false);
       setSelectedUser(null);
-      setTokenInput(''); // optional
+      setTokenInput('');
     } catch (error) {
       console.error("Failed to assign token", error);
     }
