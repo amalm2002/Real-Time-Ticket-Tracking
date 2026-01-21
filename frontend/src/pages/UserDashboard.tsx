@@ -4,11 +4,31 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Ticket, LogOut, User } from 'lucide-react';
 
 import { logout } from '@/services/slice/userSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { connectSocket } from '@/sockets/socketService';
+import { socket } from '@/sockets/socket';
+import { RootState } from '@/services/store';
 
 const UserDashboard = () => {
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const userId = useSelector((state: RootState) => state.userData.userId);
+
+  useEffect(() => {
+    connectSocket(userId);
+
+    socket.on("token_assigned", (data) => {
+      console.log("Token received:", data.token);
+      alert('updateddddddddd')
+    });
+
+    return () => {
+      socket.off("token_assigned");
+    };
+  }, [userId]);
 
   const handleLogout = () => {
     dispatch(logout());

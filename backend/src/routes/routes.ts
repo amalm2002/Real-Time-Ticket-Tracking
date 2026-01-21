@@ -23,6 +23,8 @@ router.post("/login", (req, res) => authController.login(req, res));
 
 // Admin side fetch all users
 router.get("/admin/users", (req, res) => userController.getAllUsers(req, res))
+// 
+router.post("/admin/users/assign-token/:userId", (req, res) => userController.assignToken(req, res));
 
 
 export default router;

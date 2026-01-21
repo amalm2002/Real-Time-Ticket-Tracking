@@ -50,18 +50,27 @@ const AdminDashboard = () => {
     setDialogOpen(true);
   };
 
-  const handleAssignToken = () => {
-    if (selectedUser && tokenInput.trim()) {
+  const handleAssignToken = async () => {
+    if (!selectedUser) return;
+
+    try {
+      const { token } = await backendApi.assignToken(selectedUser.id);
+
       setUsers(users.map(u =>
         u.id === selectedUser.id
-          ? { ...u, assignedToken: tokenInput.trim() }
+          ? { ...u, assignedToken: token }
           : u
       ));
+
       setDialogOpen(false);
       setSelectedUser(null);
-      setTokenInput('');
+      setTokenInput(''); // optional
+    } catch (error) {
+      console.error("Failed to assign token", error);
     }
-  };
+  }
+
+
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -194,27 +203,18 @@ const AdminDashboard = () => {
               }
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="token">Token</Label>
-              <Input
-                id="token"
-                placeholder="Enter token (e.g., TKN-001)"
-                value={tokenInput}
-                onChange={(e) => setTokenInput(e.target.value)}
-              />
-            </div>
-          </div>
+
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleAssignToken} disabled={!tokenInput.trim()}>
+            <Button onClick={handleAssignToken}>
               {isUpdate ? 'Update' : 'Assign'}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
     </div>
   );
 };

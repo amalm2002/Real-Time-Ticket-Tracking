@@ -1,22 +1,27 @@
-import express from 'express'
-import { connectSQL } from './config/sql.connection'
+import express from 'express';
+import { connectSQL } from './config/sql.connection';
 import routes from '../src/routes/routes';
-import cors from 'cors'
-import 'dotenv/config'
+import cors from 'cors';
+import 'dotenv/config';
+import http from 'http';
+import { initSocket } from './sockets/socket';
 
-const app = express()
-
-const PORT = process.env.PORT
+const app = express();
+const PORT = process.env.PORT || 3000;
 
 app.use(cors({
     origin: process.env.CORS_ORIGIN,
     credentials: true,
-}))
-connectSQL()
-app.use(express.json());
+}));
 
+connectSQL();
+app.use(express.json());
 app.use('/api', routes);
 
-app.listen(PORT, () => {
-    console.log(`server start on http://localhost:${PORT}`)
-})
+const server = http.createServer(app);
+
+initSocket(server);
+
+server.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});
