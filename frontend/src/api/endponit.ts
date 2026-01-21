@@ -16,6 +16,10 @@ export const backendApi = {
     assignToken: async (userId: string) => {
         const response = await axiosConnection.post(`/admin/users/assign-token/${userId}`);
         return response.data.data;
-    }
+    },
+    getUserById: async (userId: string) => {
+        const response = await axiosConnection.get(`/user/${userId}`);
+        return response.data.data; 
+    },
 
 }

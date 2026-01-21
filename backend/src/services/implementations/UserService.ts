@@ -2,16 +2,20 @@ import { IUserService } from "../interfaces/IUserService";
 import { IUserRepository } from "../../repositories/interfaces/IUserRepository";
 
 export class UserService implements IUserService {
-  constructor(private _userRepo: IUserRepository) {}
+  constructor(private userRepo: IUserRepository) {}
 
   async getAllUsers() {
-    return await this._userRepo.findAllUsers();
+    return this.userRepo.findAllUsers();
+  }
+
+  async getUserById(userId: string) {
+    const user = await this.userRepo.findOneById(userId);
+    if (!user) throw new Error("User not found");
+    return user;
   }
 
   async updateUserToken(userId: string, token: string) {
-    await this._userRepo.updateUserToken(userId, token);
-    const updatedUser = await this._userRepo.findOneById(userId);
-    if (!updatedUser) throw new Error("User not found");
-    return updatedUser;
+    await this.userRepo.updateUserToken(userId, token);
+    return this.getUserById(userId);
   }
 }

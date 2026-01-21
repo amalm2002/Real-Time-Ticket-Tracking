@@ -21,9 +21,11 @@ const userController = new UserController(userService);
 router.post("/signup", (req, res) => authController.signup(req, res));
 router.post("/login", (req, res) => authController.login(req, res));
 
+router.get("/users/:userId", (req, res) => userController.getUserById(req, res));
+
 // Admin side fetch all users
 router.get("/admin/users", (req, res) => userController.getAllUsers(req, res))
-// 
+// Token assigning api call
 router.post("/admin/users/assign-token/:userId", (req, res) => userController.assignToken(req, res));
 
 

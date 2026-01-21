@@ -2,8 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Ticket, LogOut, User } from 'lucide-react';
-
-import { logout } from '@/services/slice/userSlice';
+import { logout, updateToken } from '@/services/slice/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { connectSocket } from '@/sockets/socketService';
@@ -11,24 +10,25 @@ import { socket } from '@/sockets/socket';
 import { RootState } from '@/services/store';
 
 const UserDashboard = () => {
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const userId = useSelector((state: RootState) => state.userData.userId);
+  const { userId, token } = useSelector((state: RootState) => state.userData);
 
   useEffect(() => {
+    if (!userId) return;
+
     connectSocket(userId);
 
     socket.on("token_assigned", (data) => {
       console.log("Token received:", data.token);
-      alert('updateddddddddd')
+      dispatch(updateToken(data.token)); 
     });
 
     return () => {
       socket.off("token_assigned");
     };
-  }, [userId]);
+  }, [userId, dispatch]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -60,7 +60,9 @@ const UserDashboard = () => {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           <h1 className="text-3xl font-bold mb-2">My Dashboard</h1>
-          <p className="text-muted-foreground mb-8">View your assigned token below</p>
+          <p className="text-muted-foreground mb-8">
+            View your assigned token below
+          </p>
 
           <Card>
             <CardHeader>
@@ -72,29 +74,34 @@ const UserDashboard = () => {
                 This token is assigned specifically to you and updates in real-time
               </CardDescription>
             </CardHeader>
+
             <CardContent>
-              {/* {user.assignedToken ? ( */}
-              <div className="p-6 bg-primary/5 border-2 border-primary/20 rounded-lg text-center">
-                <p className="text-sm text-muted-foreground mb-2">Current Token</p>
-                <p className="text-4xl font-bold text-primary tracking-wider">
-                  {/* {user.assignedToken} */}
-                </p>
-                <div className="mt-4 flex items-center justify-center gap-2 text-sm text-green-600">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                  </span>
-                  Live
+              {token ? (
+                <div className="p-6 bg-primary/5 border-2 border-primary/20 rounded-lg text-center">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Current Token
+                  </p>
+                  <p className="text-4xl font-bold text-primary tracking-wider">
+                    {token}
+                  </p>
+                  <div className="mt-4 flex items-center justify-center gap-2 text-sm text-green-600">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    Live
+                  </div>
                 </div>
-              </div>
-              {/* ) : ( */}
-              <div className="p-6 bg-muted rounded-lg text-center">
-                <p className="text-muted-foreground">No token assigned yet</p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Your token will appear here once an admin assigns one to you
-                </p>
-              </div>
-              {/* )} */}
+              ) : (
+                <div className="p-6 bg-muted rounded-lg text-center">
+                  <p className="text-muted-foreground">
+                    No token assigned yet
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Your token will appear here once an admin assigns one to you
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
