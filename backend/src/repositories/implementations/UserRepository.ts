@@ -7,11 +7,9 @@ export class UserRepository implements IUserRepository {
 
 
     async findAllUsers(): Promise<User[]> {
-        return await this._repo
-            .createQueryBuilder("user")
-            .leftJoinAndSelect("user.tokens", "token")
-            .where("user.user_type = :type", { type: UserType.USER })
-            .getMany();
+        return await this._repo.find({
+            where: { user_type: UserType.USER },
+            select: ["id", "name", "email", "user_type", "token"]
+        });
     }
-
 }
