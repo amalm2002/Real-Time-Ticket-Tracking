@@ -1,7 +1,8 @@
-import { User } from "../../entities/user.entities";
+import { AssignTokenResponseDto, UserListResponseDto, UserResponseDto } from "../../dto/UserDTO";
+
 
 export interface IUserService {
-  getAllUsers(): Promise<User[]>;
-  getUserById(userId: string): Promise<User>;
-  updateUserToken(userId: string, token: string): Promise<User>;
+  getAllUsers(): Promise<UserListResponseDto[]>;
+  getUserById(userId: string): Promise<UserResponseDto>;
+  assignToken(userId: string): Promise<AssignTokenResponseDto>;
 }

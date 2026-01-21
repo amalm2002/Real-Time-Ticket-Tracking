@@ -40,8 +40,7 @@ export const authSlice = createSlice({
             state.name = "";
             state.userType = "";
             state.isLoggedIn = false;
-            state.token = undefined;
-
+            
             localStorage.removeItem("userInfo");
         },
         updateToken: (state, action: PayloadAction<string>) => {

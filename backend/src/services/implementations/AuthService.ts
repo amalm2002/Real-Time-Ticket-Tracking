@@ -7,6 +7,7 @@ import { MESSAGES } from "../../constants/messages";
 import { UserType } from '../../entities/user.entities';
 
 export class AuthService implements IAuthService {
+
   constructor(private _authRepo: IAuthRepository) {}
 
   async signup(data: SignUpDto): Promise<AuthResponseDto> {
@@ -15,7 +16,7 @@ export class AuthService implements IAuthService {
       throw { status: STATUS_CODES.CONFLICT, message: MESSAGES.USER_EXISTS };
     }
 
-    // Check if first user
+    // Check if first user (first user will be admin)
     const userCount = await this._authRepo.countUsers();
     const userType = userCount === 0 ? UserType.ADMIN : UserType.USER;
 

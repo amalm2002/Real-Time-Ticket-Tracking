@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import { connectSocket } from '@/sockets/socketService';
 import { socket } from '@/sockets/socket';
 import { RootState } from '@/services/store';
+import { backendApi } from '@/api/endponit';
 
 const UserDashboard = () => {
   const navigate = useNavigate();
@@ -18,11 +19,20 @@ const UserDashboard = () => {
   useEffect(() => {
     if (!userId) return;
 
+    backendApi.getUserById(userId).then((user) => {
+      if (user.token) {
+        dispatch(updateToken(user.token));
+      }
+    });
+  }, [userId]);
+  useEffect(() => {
+    if (!userId) return;
+
     connectSocket(userId);
 
     socket.on("token_assigned", (data) => {
       console.log("Token received:", data.token);
-      dispatch(updateToken(data.token)); 
+      dispatch(updateToken(data.token));
     });
 
     return () => {
