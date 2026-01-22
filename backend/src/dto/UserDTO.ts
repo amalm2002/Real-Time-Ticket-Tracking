@@ -1,20 +1,22 @@
 // Request DTO for Signup
 export interface SignUpDto {
-    name: string;
-    email: string;
-    password: string;
+  name: string;
+  email: string;
+  password: string;
 }
 // Request DTO for Login
 export interface LoginDto {
-    email: string;
-    password: string;
+  email: string;
+  password: string;
 }
 // Response DTO for authentication
 export interface AuthResponseDto {
-    id: string;
-    name: string;
-    email: string;
-    userType: string;
+  id: string;
+  name: string;
+  email: string;
+  userType: string;
+  accessToken: string;
+  refreshToken: string
 }
 
 // Response DTO for admin user list

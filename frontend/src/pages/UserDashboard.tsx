@@ -18,13 +18,14 @@ const UserDashboard = () => {
 
   useEffect(() => {
     if (!userId) return;
+    const fetchUser = async () => {
+      const user = await backendApi.getUserById(userId)
+      dispatch(updateToken(user.token));
+    }
+    fetchUser()
 
-    backendApi.getUserById(userId).then((user) => {
-      if (user.token) {
-        dispatch(updateToken(user.token));
-      }
-    });
   }, [userId]);
+
   useEffect(() => {
     if (!userId) return;
 

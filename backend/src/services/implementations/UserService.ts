@@ -1,12 +1,11 @@
 import { IUserService } from "../interfaces/IUserService";
 import { IUserRepository } from "../../repositories/interfaces/IUserRepository";
-
 import { STATUS_CODES } from "../../constants/statusCodes";
-import { MESSAGES } from "../../constants/messages";
 import { AssignTokenResponseDto, UserListResponseDto, UserResponseDto } from "../../dto/UserDTO";
+import { MESSAGES } from "../../constants/messages";
 
 export class UserService implements IUserService {
-  constructor(private _userRepo: IUserRepository) {}
+  constructor(private _userRepo: IUserRepository) { }
 
   async getAllUsers(): Promise<UserListResponseDto[]> {
     const users = await this._userRepo.findAllUsers();
@@ -26,10 +25,9 @@ export class UserService implements IUserService {
     if (!user) {
       throw {
         status: STATUS_CODES.BAD_REQUEST,
-        message: "User not found"
+        message: MESSAGES.USER_NOT_FOUND
       };
     }
-
     return {
       id: user.id,
       name: user.name,
@@ -45,10 +43,11 @@ export class UserService implements IUserService {
     if (!user) {
       throw {
         status: STATUS_CODES.BAD_REQUEST,
-        message: "User not found"
+        message: MESSAGES.USER_NOT_FOUND
       };
     }
 
+    // Random token generating once the admin trigger the api call
     const token = Math.floor(100000 + Math.random() * 900000).toString();
 
     await this._userRepo.updateUserToken(userId, token);

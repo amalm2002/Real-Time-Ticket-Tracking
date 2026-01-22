@@ -1,5 +1,3 @@
-  // src/repositories/auth.repository.ts
-
   import { IAuthRepository } from "../interfaces/IAuthRepository";
   import { User } from "../../entities/user.entities";
   import { AppDataSource } from "../../config/sql.connection";

@@ -27,7 +27,6 @@ export class UserController implements IUserController {
       if (Array.isArray(userId)) userId = userId[0];
 
       const data = await this._userService.getUserById(userId);
-
       res.status(STATUS_CODES.OK).json({ data });
     } catch (err: any) {
       res.status(err.status || STATUS_CODES.INTERNAL_ERROR).json({

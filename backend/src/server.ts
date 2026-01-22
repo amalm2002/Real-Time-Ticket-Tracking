@@ -5,6 +5,8 @@ import cors from 'cors';
 import 'dotenv/config';
 import http from 'http';
 import { initSocket } from './sockets/socket';
+import cookie from 'cookie-parser'
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,8 +16,12 @@ app.use(cors({
     credentials: true,
 }));
 
+// SQL connection
 connectSQL();
+
+app.use(cookie())
 app.use(express.json());
+// Routes
 app.use('/api', routes);
 
 const server = http.createServer(app);

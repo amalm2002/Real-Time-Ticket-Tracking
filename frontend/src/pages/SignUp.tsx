@@ -23,7 +23,8 @@ const SignUp = () => {
 
         try {
             const userData = await backendApi.signup({ name, email, password });
-            
+            localStorage.setItem('accessToken', userData.data.accessToken)
+
             dispatch(loginAction({
                 userId: userData.data.id,
                 name: userData.data.name,

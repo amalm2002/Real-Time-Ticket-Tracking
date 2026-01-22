@@ -5,10 +5,14 @@ import { SignUpDto, LoginDto, AuthResponseDto } from "../../dto/UserDTO";
 import { STATUS_CODES } from "../../constants/statusCodes";
 import { MESSAGES } from "../../constants/messages";
 import { UserType } from '../../entities/user.entities';
+import { AuthUtility } from '../../utils/auth.utils';
 
 export class AuthService implements IAuthService {
 
-  constructor(private _authRepo: IAuthRepository) {}
+  constructor(
+    private _authRepo: IAuthRepository,
+    private _authUtil: AuthUtility
+  ) { }
 
   async signup(data: SignUpDto): Promise<AuthResponseDto> {
     const existingUser = await this._authRepo.findByEmail(data.email);
@@ -23,30 +27,57 @@ export class AuthService implements IAuthService {
     const hashedPassword = await bcrypt.hash(data.password, 10);
     const user = await this._authRepo.createUser({ ...data, password: hashedPassword, user_type: userType });
 
+    const tokens = this._authUtil.generateTokens(user.id, user.user_type);
+
     return {
       id: user.id,
       name: user.name,
       email: user.email,
-      userType: user.user_type
+      userType: user.user_type,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken
     };
   }
 
   async login(data: LoginDto): Promise<AuthResponseDto> {
     const user = await this._authRepo.findByEmail(data.email);
+
     if (!user) {
       throw { status: STATUS_CODES.UNAUTHORIZED, message: MESSAGES.INVALID_CREDENTIALS };
     }
 
     const match = await bcrypt.compare(data.password, user.password);
+
     if (!match) {
       throw { status: STATUS_CODES.UNAUTHORIZED, message: MESSAGES.INVALID_CREDENTIALS };
     }
 
+    const tokens = this._authUtil.generateTokens(user.id, user.user_type);
     return {
       id: user.id,
       name: user.name,
       email: user.email,
-      userType: user.user_type
+      userType: user.user_type,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken
     };
   }
+
+  async refreshToken(refreshToken: string): Promise<{ token: string }> {
+    try {
+      const decoded = this._authUtil.verifyRefreshToken(refreshToken);
+
+      const tokens = this._authUtil.generateAccessToken(
+        decoded.id,
+        decoded.role
+      );
+
+      return {
+        token: tokens.accessToken,
+      };
+    } catch {
+      throw { status: STATUS_CODES.UNAUTHORIZED, message: MESSAGES.INVALID_REFRESH_TOKEN };
+    }
+  }
+
 }

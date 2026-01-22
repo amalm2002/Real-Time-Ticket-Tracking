@@ -22,6 +22,8 @@ const Login = () => {
 
     try {
       const userData = await backendApi.login({ email, password });
+      localStorage.setItem('accessToken', userData.data.accessToken)
+
       dispatch(loginAction({
         userId: userData.data.id,
         name: userData.data.name,
@@ -29,7 +31,6 @@ const Login = () => {
         token: userData.data.token,
         isLoggedIn: true,
       }));
-console.log(localStorage.getItem("userInfo"),'==========');
 
       navigate(userData.data.userType === 'ADMIN' ? '/admin' : '/dashboard');
     } catch (err: any) {
