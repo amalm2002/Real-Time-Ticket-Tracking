@@ -6,10 +6,10 @@ import { MESSAGES } from "../../constants/messages";
 import { AssignTokenResponseDto, UserListResponseDto, UserResponseDto } from "../../dto/UserDTO";
 
 export class UserService implements IUserService {
-  constructor(private userRepo: IUserRepository) {}
+  constructor(private _userRepo: IUserRepository) {}
 
   async getAllUsers(): Promise<UserListResponseDto[]> {
-    const users = await this.userRepo.findAllUsers();
+    const users = await this._userRepo.findAllUsers();
 
     return users.map(user => ({
       id: user.id,
@@ -21,7 +21,7 @@ export class UserService implements IUserService {
   }
 
   async getUserById(userId: string): Promise<UserResponseDto> {
-    const user = await this.userRepo.findOneById(userId);
+    const user = await this._userRepo.findOneById(userId);
 
     if (!user) {
       throw {
@@ -40,7 +40,7 @@ export class UserService implements IUserService {
   }
 
   async assignToken(userId: string): Promise<AssignTokenResponseDto> {
-    const user = await this.userRepo.findOneById(userId);
+    const user = await this._userRepo.findOneById(userId);
 
     if (!user) {
       throw {
@@ -51,7 +51,7 @@ export class UserService implements IUserService {
 
     const token = Math.floor(100000 + Math.random() * 900000).toString();
 
-    await this.userRepo.updateUserToken(userId, token);
+    await this._userRepo.updateUserToken(userId, token);
 
     return { userId, token };
   }

@@ -31,7 +31,6 @@ const UserDashboard = () => {
     connectSocket(userId);
 
     socket.on("token_assigned", (data) => {
-      console.log("Token received:", data.token);
       dispatch(updateToken(data.token));
     });
 

@@ -5,11 +5,11 @@ import { STATUS_CODES } from "../../constants/statusCodes";
 import { MESSAGES } from "../../constants/messages";
 
 export class AuthController implements IAuthController {
-    constructor(private authService: IAuthService) { }
+    constructor(private _authService: IAuthService) { }
 
     async signup(req: Request, res: Response) {
         try {
-            const data = await this.authService.signup(req.body);
+            const data = await this._authService.signup(req.body);
             res.status(STATUS_CODES.CREATED).json({
                 message: MESSAGES.USER_CREATED,
                 data
@@ -23,7 +23,7 @@ export class AuthController implements IAuthController {
 
     async login(req: Request, res: Response) {
         try {
-            const data = await this.authService.login(req.body);
+            const data = await this._authService.login(req.body);
             res.status(STATUS_CODES.OK).json({
                 message: MESSAGES.LOGIN_SUCCESS,
                 data

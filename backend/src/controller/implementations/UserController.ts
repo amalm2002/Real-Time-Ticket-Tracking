@@ -7,11 +7,11 @@ import { emitToUser } from "../../sockets/socket";
 
 export class UserController implements IUserController {
 
-  constructor(private userService: IUserService) { }
+  constructor(private _userService: IUserService) { }
 
   async getAllUsers(req: Request, res: Response): Promise<void> {
     try {
-      const data = await this.userService.getAllUsers();
+      const data = await this._userService.getAllUsers();
 
       res.status(STATUS_CODES.OK).json({ data });
     } catch (err: any) {
@@ -26,7 +26,7 @@ export class UserController implements IUserController {
       let { userId } = req.params;
       if (Array.isArray(userId)) userId = userId[0];
 
-      const data = await this.userService.getUserById(userId);
+      const data = await this._userService.getUserById(userId);
 
       res.status(STATUS_CODES.OK).json({ data });
     } catch (err: any) {
@@ -41,7 +41,7 @@ export class UserController implements IUserController {
       let { userId } = req.params;
       if (Array.isArray(userId)) userId = userId[0];
 
-      const data = await this.userService.assignToken(userId);
+      const data = await this._userService.assignToken(userId);
 
       // socket event 
       emitToUser(userId, "token_assigned", { token: data.token });

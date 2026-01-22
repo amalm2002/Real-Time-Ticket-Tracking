@@ -23,7 +23,7 @@ const SignUp = () => {
 
         try {
             const userData = await backendApi.signup({ name, email, password });
-            console.log('user data is :', userData)
+            
             dispatch(loginAction({
                 userId: userData.data.id,
                 name: userData.data.name,

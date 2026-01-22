@@ -17,15 +17,19 @@ const authController = new AuthController(authService);
 const userController = new UserController(userService);
 
 
-// Authentication side
+// Register a new user account
 router.post("/signup", (req, res) => authController.signup(req, res));
+
+// Authenticate user credentials
 router.post("/login", (req, res) => authController.login(req, res));
 
+// Fetch a single user’s details using userId
 router.get("/users/:userId", (req, res) => userController.getUserById(req, res));
 
-// Admin side fetch all users
+// Fetch all registered users (Admin access only)
 router.get("/admin/users", (req, res) => userController.getAllUsers(req, res))
-// Token assigning api call
+
+// Assign a token to a specific user (Admin action)
 router.post("/admin/users/assign-token/:userId", (req, res) => userController.assignToken(req, res));
 
 
