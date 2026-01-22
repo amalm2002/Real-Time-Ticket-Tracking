@@ -31,7 +31,6 @@ export class User {
   })
   user_type!: UserType;
 
-  // 🔥 SINGLE token field
   @Column({ type: "varchar", length: 100, nullable: true })
   token!: string | null;
 

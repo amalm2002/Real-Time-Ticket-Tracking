@@ -19,8 +19,8 @@ export const AppDataSource = new DataSource({
 export const connectSQL = async (): Promise<void> => {
     try {
         await AppDataSource.initialize();
-        console.log('✅ SQL Database connected');
+        console.log('SQL Database connected');
     } catch (error) {
-        console.error('❌ Error connecting to SQL DB:', error);
+        console.error('Error connecting to SQL DB:', error);
     }
 };

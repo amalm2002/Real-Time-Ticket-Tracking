@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AuthUtility } from "../utils/auth.utils";
 import { STATUS_CODES } from "../constants/statusCodes";
+import { MESSAGES } from "../constants/messages";
 
 const authUtil = new AuthUtility();
 
@@ -11,10 +12,10 @@ export interface AuthRequest extends Request {
 export const verifyJWT = (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
         const authHeader = req.headers.authorization;
-        console.log(authHeader, ': authheaderrrrr')
+
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
             return res.status(STATUS_CODES.UNAUTHORIZED).json({
-                message: "Access token missing",
+                message: MESSAGES.TOKEN_MISSING,
             });
         }
 
@@ -24,9 +25,8 @@ export const verifyJWT = (req: AuthRequest, res: Response, next: NextFunction) =
         req.user = decoded;
         next();
     } catch (err) {
-        console.log(err)
         return res.status(STATUS_CODES.UNAUTHORIZED).json({
-            message: "Invalid or expired token",
+            message: MESSAGES.TOKEN_EXPIRE,
         });
     }
 };

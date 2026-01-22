@@ -46,7 +46,7 @@ export class UserController implements IUserController {
       emitToUser(userId, "token_assigned", { token: data.token });
 
       res.status(STATUS_CODES.OK).json({
-        message: "Token assigned successfully",
+        message: MESSAGES.TICKET_TOKENT_ASSIGN,
         data
       });
     } catch (err: any) {
