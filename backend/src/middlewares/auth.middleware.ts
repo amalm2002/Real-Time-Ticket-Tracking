@@ -30,3 +30,12 @@ export const verifyJWT = (req: AuthRequest, res: Response, next: NextFunction) =
         });
     }
 };
+
+export const authorizedRole=(role:string)=>{
+    return (req:AuthRequest,res:Response,next:NextFunction)=>{
+        if (req.user?.role!==role) {
+          return  res.status(STATUS_CODES.BAD_REQUEST).json({message:'forbiden'})
+        }
+        next()
+    }
+}

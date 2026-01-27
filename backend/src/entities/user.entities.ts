@@ -3,7 +3,9 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  OneToMany,
 } from "typeorm";
+import { Token } from "./token.entities";
 
 export enum UserType {
   ADMIN = "ADMIN",
@@ -31,8 +33,11 @@ export class User {
   })
   user_type!: UserType;
 
-  @Column({ type: "varchar", length: 100, nullable: true })
-  token!: string | null;
+  // @Column({ type: "varchar", length: 100, nullable: true })
+  // token!: string | null;
+
+  @OneToMany(() => Token, (token) => token.user)
+  tokens!: Token[];
 
   @CreateDateColumn()
   joining_date!: Date;

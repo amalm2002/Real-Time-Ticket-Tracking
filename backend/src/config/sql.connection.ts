@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
 import dotenv from 'dotenv';
 import { User } from '../entities/user.entities';
+import { Token } from '../entities/token.entities';
 
 dotenv.config();
 
@@ -13,7 +14,7 @@ export const AppDataSource = new DataSource({
     database: process.env.SQL_DB,
     synchronize: true,
     logging: false,
-    entities: [User],
+    entities: [User,Token],
 });
 
 export const connectSQL = async (): Promise<void> => {

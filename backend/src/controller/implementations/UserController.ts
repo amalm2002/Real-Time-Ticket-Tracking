@@ -34,6 +34,19 @@ export class UserController implements IUserController {
       });
     }
   }
+  async getUserTokens(req: Request, res: Response): Promise<void> {
+    try {
+      let { userId } = req.params;
+      if (Array.isArray(userId)) userId = userId[0];
+
+      const data = await this._userService.getUserTokens(userId);
+      res.status(STATUS_CODES.OK).json({ data });
+    } catch (err: any) {
+      res.status(err.status || STATUS_CODES.INTERNAL_ERROR).json({
+        message: err.message || MESSAGES.SERVER_ERROR
+      });
+    }
+  }
 
   async assignToken(req: Request, res: Response): Promise<void> {
     try {

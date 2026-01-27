@@ -5,10 +5,17 @@ import { AppDataSource } from "../../config/sql.connection";
 export class UserRepository implements IUserRepository {
   private _repo = AppDataSource.getRepository(User);
 
+  // async findAllUsers(): Promise<User[]> {
+  //   return this._repo.find({
+  //     where: { user_type: UserType.USER },
+  //     select: ["id", "name", "email", "token", "user_type"],
+  //   });
+  // }
+
   async findAllUsers(): Promise<User[]> {
     return this._repo.find({
       where: { user_type: UserType.USER },
-      select: ["id", "name", "email", "token", "user_type"],
+      relations: ["tokens"],
     });
   }
 
@@ -16,7 +23,7 @@ export class UserRepository implements IUserRepository {
     return this._repo.findOneBy({ id: userId });
   }
 
-  async updateUserToken(userId: string, token: string): Promise<void> {
-    await this._repo.update(userId, { token });
-  }
+  // async updateUserToken(userId: string, token: string): Promise<void> {
+    // await this._repo.update(userId, { token });
+  // }
 }

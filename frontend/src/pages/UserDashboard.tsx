@@ -4,13 +4,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Ticket, LogOut, User } from 'lucide-react';
 import { logout, updateToken } from '@/services/slice/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { connectSocket } from '@/sockets/socketService';
 import { socket } from '@/sockets/socket';
 import { RootState } from '@/services/store';
 import { backendApi } from '@/api/endponit';
 
+
+interface TokenType {
+  id: string;
+  token: string;
+  status: "ACTIVE" | "INACTIVE";
+  createdAt: string;
+}
+
 const UserDashboard = () => {
+  const [tokens, setTokens] = useState<TokenType[]>([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -20,12 +29,15 @@ const UserDashboard = () => {
     if (!userId) return;
     const fetchUser = async () => {
       const user = await backendApi.getUserById(userId)
+      const userTokens = await backendApi.getUserTokens(userId);
+      console.log('userTokens:', userTokens);
+      setTokens(userTokens);
       dispatch(updateToken(user.token));
     }
     fetchUser()
 
   }, [userId]);
-
+  console.log('=========', tokens)
   useEffect(() => {
     if (!userId) return;
 
@@ -86,33 +98,44 @@ const UserDashboard = () => {
             </CardHeader>
 
             <CardContent>
-              {token ? (
-                <div className="p-6 bg-primary/5 border-2 border-primary/20 rounded-lg text-center">
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Current Token
-                  </p>
-                  <p className="text-4xl font-bold text-primary tracking-wider">
-                    {token}
-                  </p>
-                  <div className="mt-4 flex items-center justify-center gap-2 text-sm text-green-600">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                    </span>
-                    Live
-                  </div>
+              {tokens.length > 0 ? (
+                <div className="space-y-4">
+                  {tokens.map((item) => (
+                    <div
+                      key={item.id}
+                      className={`p-4 rounded-lg border text-center ${item.status === "ACTIVE"
+                        ? "bg-primary/10 border-primary text-primary"
+                        : "bg-muted"
+                        }`}
+                    >
+                      <p className="text-sm mb-1">
+                        {item.status === "ACTIVE" ? "Active Token" : "Previous Token"}
+                        status : {item.status}
+                      </p>
+
+                      <p className="text-2xl font-bold tracking-wider">
+                        {item.token}
+                      </p>
+
+                      {item.status === "ACTIVE" && (
+                        <div className="mt-2 flex items-center justify-center gap-2 text-sm text-green-600">
+                          <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                          </span>
+                          Live
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               ) : (
                 <div className="p-6 bg-muted rounded-lg text-center">
-                  <p className="text-muted-foreground">
-                    No token assigned yet
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Your token will appear here once an admin assigns one to you
-                  </p>
+                  <p className="text-muted-foreground">No tokens available</p>
                 </div>
               )}
             </CardContent>
+
           </Card>
         </div>
       </main>

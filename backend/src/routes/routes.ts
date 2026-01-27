@@ -7,14 +7,16 @@ import { UserRepository } from "../repositories/implementations/UserRepository";
 import { UserService } from "../services/implementations/UserService";
 import { AuthUtility } from "../utils/auth.utils";
 import { verifyJWT } from "../middlewares/auth.middleware";
+import { TokenRepository } from "../repositories/implementations/TokenRepository";
 
 const router = Router();
 
 // Dependency Injection
 const authRepo = new AuthRepository();
 const userRepo = new UserRepository();
+const tokenRepo = new TokenRepository()
 const authUtil = new AuthUtility
-const userService = new UserService(userRepo);
+const userService = new UserService(userRepo, tokenRepo);
 const authService = new AuthService(authRepo, authUtil);
 const authController = new AuthController(authService);
 const userController = new UserController(userService);
@@ -28,6 +30,7 @@ router.post("/login", (req, res) => authController.login(req, res));
 
 // Fetch a single user’s details using userId
 router.get("/user/:userId", verifyJWT, (req, res) => userController.getUserById(req, res));
+router.get("/user/token/:userId", verifyJWT, (req, res) => userController.getUserTokens(req, res));
 
 // Fetch all registered users (Admin access only)
 router.get("/admin/users", verifyJWT, (req, res) => userController.getAllUsers(req, res))

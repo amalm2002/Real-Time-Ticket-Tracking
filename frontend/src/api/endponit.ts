@@ -22,7 +22,14 @@ export const backendApi = {
     // User side api call 
     getUserById: async (userId: string) => {
         const response = await axiosConnection.get(`/user/${userId}`);
-        console.log('response :',response)
+        // console.log('response :',response)
         return response.data.data;
-    }
+    },
+
+    getUserTokens: async (userId: string) => {
+        const response = await axiosConnection.get(`/user/token/${userId}`);
+        console.log('response tokensss :',response)
+        return response.data.data;
+    },
+
 }

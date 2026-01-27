@@ -1,8 +1,10 @@
 import { Server } from "socket.io";
 import http from "http";
 import 'dotenv/config'
+// import { AuthUtility } from "../utils/auth.utils";
 
 export let io: Server;
+// const authUtil = new AuthUtility();
 
 const onlineUsers = new Map<string, string>();
 
@@ -14,6 +16,21 @@ export const initSocket = (server: http.Server) => {
             credentials: true
         },
     });
+
+    // io.use((socket,next)=>{
+    //     try {
+    //         const token =socket.handshake.auth.token
+    //         if (!token) {
+    //             return next(new Error("Authentication error: Token missing"));
+    //         }
+    //         const decoded =authUtil.verifyAccessToken(token)
+    //         socket.data.user=decoded
+    //         next()
+    //     } catch (error) {
+            
+    //     }
+    // })
+
 
     io.on("connection", (socket) => {
         console.log("Socket connected:", socket.id);
