@@ -23,21 +23,27 @@ const UserDashboard = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { userId, token } = useSelector((state: RootState) => state.userData);
+  const { userId ,token} = useSelector((state: RootState) => state.userData);
 
   useEffect(() => {
     if (!userId) return;
     const fetchUser = async () => {
       const user = await backendApi.getUserById(userId)
       const userTokens = await backendApi.getUserTokens(userId);
-      console.log('userTokens:', userTokens);
       setTokens(userTokens);
+
+      const activeToken = userTokens.find(
+        (item) => item.status === "ACTIVE"
+      );
+
+      dispatch(updateToken(activeToken.token));
+
       dispatch(updateToken(user.token));
     }
     fetchUser()
 
-  }, [userId]);
-  console.log('=========', tokens)
+  }, [userId,token]);
+
   useEffect(() => {
     if (!userId) return;
 
